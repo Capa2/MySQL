@@ -2,32 +2,27 @@ package db;
 
 import java.sql.*;
 
-public class MySQL {
-    Accessor accessor;
-    Connection con;
-    PreparedStatement stmt;
+abstract class MySQL {
+    private ConnectionManager connectionManager;
+    private Connection connection;
+    private PreparedStatement stmt;
 
-    public MySQL() {
-        accessor = new Accessor();
-        openCon();
-        isConClosed();
-        closeCon();
-        isConClosed();
-        openCon();
-        isConClosed();
+    private void openCon() {
+        connection = getConnectionAs("root", "mq224jok", "db");
     }
-    // Manage Connection with Open() Close()
-    private void openCon() {con = getConnectionAs("root", "mq224jok", "db");}
 
-    private void closeCon() {accessor.disconnect();}
+    private void closeCon() {
+        connectionManager.disconnect();
+    }
 
     private Connection getConnectionAs(String username, String password, String database) {
-        accessor.connect(username, password, database); // Enter credentials & select database
-        return accessor.getConnection(); // Get connection object
+        connectionManager.connect(username, password, database); // Enter credentials & select database
+        return connectionManager.getConnection(); // Get connection object
     }
+
     private void isConClosed() {
         try {
-            System.out.println(con.isClosed());
+            System.out.println(connection.isClosed());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

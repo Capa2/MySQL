@@ -2,16 +2,16 @@ package db;
 
 import java.sql.*;
 
-public class Accessor {
+public class ConnectionManager {
     Connection connection;
     String url, username, password, database;
 
-    public Accessor() {
+    public ConnectionManager() {
         loadDriver();
         url = "jdbc:mysql://localhost:3306/"; // Server URL
     }
 
-    public Accessor(String url) {
+    public ConnectionManager(String url) {
         loadDriver();
         this.url = url; // Server URL
     }
