@@ -1,0 +1,31 @@
+@startuml
+skinparam actorStyle awesome
+:Noncustomer: as nonuser
+:Customer: as user
+:Bank Staff: as staff
+(Sign up as customer) as (signup)
+rectangle Bank {
+    package Account {
+        (Create account) as (addacc)
+        (Review account) as (status)
+        (Freeze account) as (freezeacc)
+        (Close account) as (closeacc)
+    }
+    package Funds {
+        (Withdraw) as (withdraw)
+        (Deposit) as (deposit)
+        (Transfer) as (transfer)
+    }
+}
+nonuser -> (signup)
+
+user --> (withdraw)
+user --> (deposit)
+user --> (transfer)
+
+user --> (status)
+staff --> (status)
+(status) --> (addacc)
+(status) --> (freezeacc)
+(status) --> (closeacc)
+@enduml
