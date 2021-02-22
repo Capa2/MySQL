@@ -1,31 +1,71 @@
 @startuml
-skinparam actorStyle awesome
-:Noncustomer: as nonuser
-:Customer: as user
-:Bank Staff: as staff
-(Sign up as customer) as (signup)
+'settings'
+left to right direction
+
+'actors'
+actor "Non-customer" as nonuser
+actor Customer as user
+actor "Bank Staff" as staff
+
+'databases'
+database MySQL as mysql {
+component customers
+component accounts
+component transactions
+}
+
+
+
+'bank system'
 rectangle Bank {
+    'account system'
     package Account {
-        (Create account) as (addacc)
-        (Review account) as (status)
-        (Freeze account) as (freezeacc)
-        (Close account) as (closeacc)
+        (Create account) as createAccount
+        (Account management) as manageAccount
+        (Freeze account) as freezeAccount
+        (Close account) as closeAccount
+        artifact account as acc
     }
-    package Funds {
-        (Withdraw) as (withdraw)
-        (Deposit) as (deposit)
-        (Transfer) as (transfer)
+    'transaction system'
+    package Transactions {
+        (Withdraw)
+        (Deposit)
+        (Transfer)
+        (Review)
+        artifact transaction as trans
     }
 }
-nonuser -> (signup)
+'signup usecase'
+artifact customer
+(Sign up as customer) as (signup)
+nonuser -down-> (signup)
+(signup) .. customer
+customer -[dotted]--> customers
 
-user --> (withdraw)
-user --> (deposit)
-user --> (transfer)
+    'staff associations'
+    staff -|> (Review)
+    staff ---|> freezeAccount
 
-user --> (status)
-staff --> (status)
-(status) --> (addacc)
-(status) --> (freezeacc)
-(status) --> (closeacc)
+    'user associations'
+    user --> manageAccount
+    user --> (Withdraw)
+    user --> (Deposit)
+    user --> (Transfer)
+    user --> (Review)
+
+    'transaction associations'
+    (Withdraw) ..> trans : add
+    (Deposit) ..> trans : add
+    (Transfer) ..> trans : add
+    (Review) <.. trans : get
+    trans -[dotted]-> transactions
+
+    'account associations'
+    manageAccount --> createAccount
+    manageAccount --> freezeAccount
+    manageAccount --> closeAccount
+    closeAccount -[dashed]-> acc : update
+    freezeAccount -[dashed]-> acc : update
+    createAccount -[dashed]-> acc : add
+    acc -[dotted]-> accounts
 @enduml
